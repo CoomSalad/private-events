@@ -1,0 +1,45 @@
+<h1>Private Events</h1>
+
+<% if Event.upcoming.exists? %>
+    <h2>Being held right now:</h2>
+    <ul>
+    <% @events.where("date >= ?", Date.current).each do |event| %>
+        <li>
+            <%= link_to event.name, event %>&nbsp;by <%= link_to event.creator.name, user_path(event.creator) %>&nbsp;<%= event.date %>
+        </li>
+    <% end %>
+    </ul>
+<% else %>
+    <h2>No one is holding events at the moment.</h2>
+<% end %>
+<br>
+<% if Event.past.exists? %>
+    <h2>Previous events:</h2>
+    <ul>
+    <% @events.where("date < ?", Date.current).each do |event| %>
+        <li>
+            <%= link_to event.name, event %>&nbsp;by <%= link_to event.creator.name, user_path(event.creator) %>&nbsp;<%= event.date %>
+        </li>
+    <% end %>
+    </ul>
+<% else %>
+    <h2>No event has been held previously.</h2>
+<% end %>
+
+
+
+<br>
+<br>
+<% if user_signed_in? %>
+    You are logged in as <em><%= current_user.name %></em>.
+<% else %>
+    <%= link_to "Sign in", new_user_session_path %>
+<% end %>
+<br>
+<br>
+<%= link_to "Host new event", new_event_path %>
+<br>
+<br>
+<% if user_signed_in? %>
+<%= link_to "Log out", destroy_user_session_path, method: :delete %>
+<% end %>

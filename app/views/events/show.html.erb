@@ -1,0 +1,33 @@
+<h1><%= @event.name %></h1>
+<h3>is being held by <em><%= @event.creator.name %></em></h3>
+<h2>Details:</h2>
+<%= @event.description %>
+<% if @event.attendees.none? %>
+    <h3>No one has joined this event yet.</h3>
+<% else %>
+    <h3>Currently Enrolled:</h3>
+    <ul>
+    <% @event.attendees.each do |attendee| %>
+        <li><%= link_to attendee.name, user_path(attendee) %></li>
+    <% end %>
+    </ul>
+<% end %>
+<br>
+<br>
+<% if user_signed_in? %>
+    <% if current_user.attended_events.exists?(id: @event.id) %>
+        You are in!
+        <%= form_with url: event_event_attending_path(@event, EventAttending.find_by(attendee_id: current_user.id, attended_event_id: @event.id)), method: :delete do |form| %>
+            <%= form.submit "Opt Out" %>
+        <% end %>
+    <% else %>
+        <%= form_with url: event_event_attendings_path(@event), method: :post do |form| %>
+            <%= form.submit "Join" %>
+        <% end %>
+    <% end %>
+<% else %>
+    <%= link_to "Sign in", new_user_session_path %> to join events.
+<% end %>
+<br>
+<br>
+<%= link_to "Home", root_path %>
